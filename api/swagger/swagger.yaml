@@ -1,0 +1,145 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: School Fes Helper
+# during dev, should point to your local machine
+host: localhost:10010
+# basePath prefixes all resource paths
+basePath: /
+#
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+paths:
+  /event/score_match:
+    x-swagger-router-controller: score_match
+    get:
+      description: Returns number of loveca that user needs to take in order to reach target event points to the caller
+      # used as the method name of the controller
+      operationId: score_match
+      parameters:
+        - name: current_rank
+          in: query
+          description: Current rank of user
+          required: true
+          type: number
+          minimum: 1
+        - name: current_lp
+          in: query
+          description: Current LP of user
+          required: false
+          type: number
+          default: 0
+          minimum: 0
+        - name: current_exp
+          in: query
+          description: Current Exp of user
+          required: false
+          type: number
+          default: 0
+          minimum: 0
+        - name: current_point
+          in: query
+          description: Current event point that user has
+          default: 0
+          required: false
+          type: number
+          minimum: 0
+        - name: current_token
+          in: query
+          description: Number of token that user has
+          required: false
+          type: number
+          default: 0
+          minimum: 0
+        - name: target_point
+          in: query
+          description: Target event point that user wants to reach
+          required: true
+          type: number
+          minimum: 0
+        - name: expected_difficulty
+          in: query
+          description: Target event point that user wants to reach
+          required: true
+          type: number
+          minimum: 0
+          maximum: 4
+          default: 3
+        - name: expected_score
+          in: query
+          description: Target event point that user wants to reach
+          required: true
+          type: number
+          minimum: 0
+          maximum: 4
+          default: 4
+        - name: expected_order
+          in: query
+          description: Target event point that user wants to reach
+          required: true
+          type: number
+          minimum: 0
+          maximum: 3
+          default: 3
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/ScroreMatchResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /swagger:
+    x-swagger-pipe: swagger_raw
+# complex objects have schema definitions
+definitions:
+  ScroreMatchResponse:
+    required:
+      - event
+    properties:
+      event:
+        type: object
+        required:
+          - name
+        properties:
+          name:
+            type: string
+          beginning:
+            type: string
+          end:
+            type: string
+      player:
+        type: object
+        required:
+          - rank
+          - point
+        properties:
+          rank:
+            type: number
+          exp:
+            type: number
+          lp:
+            type: number
+          point:
+            type: number
+      live:
+        type: number
+      loveca:
+        type: number
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
